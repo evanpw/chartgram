@@ -89,9 +89,20 @@ def gravatar_url(email, size=80):
 def chart(data): 			#added - JJ
 		"""Create a chart"""
 		df=pandas.read_csv('sample.csv')
-		df.plot(x=0,y=1)
+		df.plot()
 		plt.savefig('./static/%s.png' % (data),dpi=80)
 		plt.close()
+		
+@app.route('/view_chart')
+def view_chart():
+	df = pandas.read_csv('sample.csv')
+	
+	xs = df.columns[0]
+	ys = df.columns[1]
+	df = df.sort(xs)
+	
+	return render_template('chart.html',
+		data = [ dict(label = 'Sample', points = [[x, y] for x, y in zip(df[xs], df[ys])]) ])
 
 @app.before_request
 def before_request():
